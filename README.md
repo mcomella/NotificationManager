@@ -11,3 +11,8 @@ Allow the user to create basic categories/contexts (location, time, etc) for whe
 
 ## V2 (for later)
 Provide more detailed control over notifications, such as different cues (visual, sounds, vibrations, etc), priority (levels?), other contexts around them that we didn't explore yet (location, time, etc).
+
+## Technical Notes
+API 18 is supported because `NotificationListenerService` was added in that
+version. However, API 21 adds some additional features (e.g. interruption
+filters) that could be useful.
