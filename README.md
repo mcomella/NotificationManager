@@ -1,8 +1,11 @@
 # NTFY app
-Managing notifications on Android.
+A notifications manager on Android.
 
-## v0.5
-Display a list of apps with toggles to enable/disable notifications.
+## V0.5
+Display a list of apps that the user has and provide a quick way to disable/enable their notifications.
 
-## v1.0
-Display multiple lists of apps, each with a different context (e.g. at work).
+## V1
+Allow the user to create basic categories/contexts (location, time, etc) for when to mute which notifications.
+
+## V2 (for later)
+Provide more detailed control over notifications, such as different cues (visual, sounds, vibrations, etc), priority (levels?), other contexts around them that we didn't explore yet (location, time, etc).
