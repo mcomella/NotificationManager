@@ -1,6 +1,7 @@
 package me.mcomella.notificationmanager
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -29,6 +30,13 @@ class ApplicationListActivity : AppCompatActivity() {
         val layoutManager = LinearLayoutManager(this)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
         application_list.layoutManager = layoutManager
+        startNotificationService()
+    }
+
+    private fun startNotificationService() {
+        // TODO: PERMISSIONS?
+        val intent = Intent(this, NotificationService::class.java)
+        startService(intent) // TODO: start service on device startup too.
     }
 }
 
