@@ -17,6 +17,11 @@ class NotificationService : NotificationListenerService() {
                 setContentText("Listening and blocking specified notifications..."). // TODO: doesn't appear
                 build()
 
+    private val diskManager: DiskManager
+        get() = DiskManager(this) // TODO: fragile. underlying filesDir is null at init time but not when accessed later.
+    private val appsAndState: Map<String, Boolean>
+        get() = diskManager.readApplicationsFromDisk() // TODO: getting from disk each time inefficient. send refresh signals.
+
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         Log.d(TAG, "onStartCommand")
         startForeground(FOREGROUND_ID, foregroundNotification)
@@ -26,6 +31,10 @@ class NotificationService : NotificationListenerService() {
     override fun onNotificationPosted(sbn: StatusBarNotification) {
         super.onNotificationPosted(sbn)
         Log.d(TAG, "onNotificationPosted: " + sbn)
+        if (!appsAndState.getOrElse(sbn.packageName, {true})) {
+            Log.d(TAG, "Cancelling notification for package: " + sbn.packageName)
+            cancelNotification(sbn.key)
+        }
     }
 
     override fun onBind(intent: Intent): IBinder? {
