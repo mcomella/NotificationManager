@@ -4,6 +4,8 @@ A notifications manager on Android.
 ## V0.5
 Display a list of apps that the user has and provide a quick way to disable/enable their notifications.
 
+(Alternatively, allow user to add an app to the manager. All added app will be muted until it’s removed.)
+
 ## V1
 Allow the user to create basic categories/contexts (location, time, etc) for when to mute which notifications.
 
