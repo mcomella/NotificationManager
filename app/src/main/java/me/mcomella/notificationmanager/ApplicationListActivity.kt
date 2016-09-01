@@ -21,10 +21,18 @@ class ApplicationListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_application_list)
+        attachClickListeners()
+    }
+
+    private fun attachClickListeners() {
+        notification_settings_button.setOnClickListener {
+            startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
+        }
     }
 
     override fun onStart() {
         super.onStart()
+
         application_list.adapter = ApplicationListAdapter(this)
         application_list.setHasFixedSize(true)
         val layoutManager = LinearLayoutManager(this)
