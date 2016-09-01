@@ -4,6 +4,9 @@ A notifications manager on Android.
 ## Try it
 Install the apk in the `dist/` directory.
 
+Note: the app only starts its background service when the app is initially
+opened so on phone reboot, you'll have to reopen the app before it will work.
+
 ## Prototype outline
 ### V0.5
 Display a list of apps that the user has and provide a quick way to disable/enable their notifications.
