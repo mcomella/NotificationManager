@@ -1,5 +1,6 @@
 package me.mcomella.notificationmanager
 
+import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -30,7 +31,7 @@ class ContextSelectorActivity : AppCompatActivity() {
         super.onStart()
 
         tabsLayout.tabMode = TabLayout.MODE_SCROLLABLE
-        contentPager.adapter = UserContextAdapter(supportFragmentManager)
+        contentPager.adapter = UserContextAdapter(this, supportFragmentManager)
         tabsLayout.setupWithViewPager(contentPager)
 
         startNotificationService()
@@ -42,16 +43,19 @@ class ContextSelectorActivity : AppCompatActivity() {
     }
 }
 
-private class UserContextAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(fragmentManager) {
+private class UserContextAdapter(context: Context, fragmentManager: FragmentManager) : FragmentPagerAdapter(fragmentManager) {
+    val diskManager = DiskManager(context)
+    val userContexts = diskManager.readUserContextsFromDisk()
+
     override fun getCount(): Int {
-        return 2
+        return userContexts.size
     }
 
     override fun getItem(position: Int): Fragment {
-        return ApplicationListFragment()
+        return ApplicationListFragment.newInstance(userContexts[position].apps)
     }
 
     override fun getPageTitle(position: Int): CharSequence {
-        return "Page $position"
+        return userContexts[position].name
     }
 }
