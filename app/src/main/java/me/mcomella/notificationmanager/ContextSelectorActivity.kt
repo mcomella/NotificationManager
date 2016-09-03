@@ -10,7 +10,7 @@ import android.support.v4.app.FragmentPagerAdapter
 
 import kotlinx.android.synthetic.main.activity_application_list.*
 
-class ApplicationListActivity : AppCompatActivity() {
+class ContextSelectorActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
