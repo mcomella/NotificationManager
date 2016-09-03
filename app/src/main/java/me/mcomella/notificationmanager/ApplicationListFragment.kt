@@ -58,7 +58,7 @@ private class ApplicationListAdapter(context: Context) : RecyclerView.Adapter<Ap
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
         val view = LayoutInflater.
                 from(parent!!.context).
-                inflate(R.layout.application_item, parent, false)
+                inflate(R.layout.application_list_item, parent, false)
         return ViewHolder(view)
     }
 
