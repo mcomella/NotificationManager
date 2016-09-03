@@ -25,6 +25,9 @@ class ContextSelectorActivity : AppCompatActivity() {
             startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
         }
         */
+        fab.setOnClickListener {
+            // TODO: spawn new selection.
+        }
     }
 
     override fun onStart() {
