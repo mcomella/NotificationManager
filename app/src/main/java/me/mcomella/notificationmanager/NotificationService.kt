@@ -32,13 +32,16 @@ class NotificationService : NotificationListenerService() {
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
         super.onNotificationPosted(sbn)
-        Log.d(TAG, "onNotificationPosted: " + sbn)
-        /*
-        if (!appsAndState.getOrElse(sbn.packageName, {true})) {
-            Log.d(TAG, "Cancelling notification for package: " + sbn.packageName)
+
+        val diskManager = DiskManager(this)
+        val allApps = diskManager.readUserContextsFromDisk().map {
+            it.apps
+        }.reduce { left, right -> left + right }.toSet()
+
+        if (allApps.contains(sbn.packageName)) {
+            Log.d(TAG, "Cancelling notification for package, ${sbn.packageName}.")
             cancelNotification(sbn.key)
         }
-        */
     }
 
     override fun onBind(intent: Intent): IBinder? {
