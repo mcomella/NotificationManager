@@ -36,7 +36,9 @@ class ApplicationListFragment() : Fragment() {
     }
 
     private fun initApplicationList(rootView: View) {
-        val apps = arguments.getStringArray(ARG_APPS).toList()
+        val apps = arguments.getStringArray(ARG_APPS).toList().sortedBy {
+            context.packageManager.getApplicationInfo(it, 0).loadLabel(context.packageManager).toString()
+        }
 
         val applicationList = rootView.findViewById(R.id.applicationList) as RecyclerView
         applicationList.adapter = ApplicationListAdapter(context, apps)
