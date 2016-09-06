@@ -24,7 +24,7 @@ class NotificationService : NotificationListenerService() {
         get() = diskManager.readUserContextsFromDisk() // TODO: getting from disk each time inefficient. send refresh signals.
         */
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(TAG, "onStartCommand")
         startForeground(FOREGROUND_ID, foregroundNotification)
         return super.onStartCommand(intent, flags, startId) // TODO: sticky?

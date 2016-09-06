@@ -69,19 +69,37 @@ class ContextSelectorActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
+        val innerRes = if (data != null) data.getBundleExtra(KEY_BUNDLE) else Bundle()
         when (requestCode) {
-            REQ_CODE_ADD_LIST -> handleAddList()
-            else -> throw IllegalArgumentException("Unknown request code: $requestCode") // TODO: this is fragile, but may prevent unexpected behavior.
+            REQ_CODE_ADD_LIST -> {
+                if (data == null) throw IllegalArgumentException("Data unexpectedly null")
+                handleAddList(innerRes)
+            }
+            //else -> throw IllegalArgumentException("Unknown request code: $requestCode") // TODO: this is fragile, but may prevent unexpected behavior.
         }
     }
 
-    private fun handleAddList() {
-        // TODO
+    private fun handleAddList(result: Bundle) {
+        val listTitle = result.getString(AddListActivity.KEY_LIST_TITLE)
+
+        // TODO: terribly inefficient.
+        val diskManager = DiskManager(this)
+        val userContexts = diskManager.readUserContextsFromDisk()
+        val modified = userContexts + UserContext(name = listTitle,
+                                                  apps = listOf<String>())
+        diskManager.saveUserContextsToDisk(modified)
+
+        contentPager.adapter = UserContextAdapter(this, supportFragmentManager) // refreshes data.
     }
 
     private fun startNotificationService() {
         val intent = Intent(this, NotificationService::class.java)
         startService(intent) // TODO: start service on device startup too.
+    }
+
+    companion object Keys {
+        val KEY_BUNDLE = "bundle"
     }
 }
 
