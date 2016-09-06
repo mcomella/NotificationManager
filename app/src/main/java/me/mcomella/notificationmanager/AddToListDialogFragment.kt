@@ -1,11 +1,11 @@
 package me.mcomella.notificationmanager
 
+import android.app.Dialog
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
 
 class AddToListDialogFragment() : DialogFragment() {
     companion object Factory {
@@ -17,8 +17,12 @@ class AddToListDialogFragment() : DialogFragment() {
         }
     }
 
+    private val STYLE = DialogFragment.STYLE_NO_TITLE
+    private val THEME = android.R.style.Theme_Material_Light_Dialog
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setStyle(STYLE, THEME)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
