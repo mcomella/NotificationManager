@@ -18,6 +18,8 @@
 
         <activity android:name=".AddListActivity"
                   android:exported="false"/>
+        <activity android:name=".AddAppActivity"
+                  android:exported="false"/>
 
         <service android:name=".NotificationService"
                  android:label="NotificationManager"

@@ -50,7 +50,7 @@ class ContextSelectorActivity : AppCompatActivity() {
             startActivityForResult(intent, REQ_CODE_ADD_LIST)
         }
         newFrag.onAddAppClickListener = {
-            val intent = Intent(this, AddListActivity::class.java) // todo
+            val intent = Intent(this, AddAppActivity::class.java) // todo
             startActivityForResult(intent, REQ_CODE_ADD_APP)
         }
 

@@ -47,20 +47,6 @@ private class ApplicationListAdapter(context: Context, val apps: List<String>) :
         RecyclerView.Adapter<ApplicationListAdapter.ViewHolder>() {
 
     val pkgManager = context.packageManager
-    // TODO: make temp vars not properties
-    // TODO: lazy? (especially icons)
-    // TODO: filter on system pkgs? http://stackoverflow.com/a/8483920? enabled apps?
-    /*
-    private val _installedApps = context.packageManager.getInstalledApplications(0)
-    private val _appsAndStateOnDisk = diskManager.readUserContextsFromDisk()
-    val installedAppInfo = _installedApps.map {
-        val pkgManager = context.packageManager
-        AppInfo(pkgName = it.packageName,
-                label = it.loadLabel(pkgManager).toString(),
-                icon = it.loadIcon(pkgManager),
-                isChecked = _appsAndStateOnDisk.getOrElse(it.packageName, { true }))
-    }.sortedBy { it.label }
-    */
 
     override fun getItemCount(): Int {
         return apps.size
