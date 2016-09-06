@@ -8,9 +8,11 @@ import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
-import android.support.v4.app.FragmentTransaction
 
 import kotlinx.android.synthetic.main.activity_application_list.*
+
+val REQ_CODE_ADD_LIST = 1999
+val REQ_CODE_ADD_APP = 2000
 
 class ContextSelectorActivity : AppCompatActivity() {
 
@@ -42,6 +44,16 @@ class ContextSelectorActivity : AppCompatActivity() {
         ft.addToBackStack(null)
 
         val newFrag = AddToListDialogFragment.newInstance()
+
+        newFrag.onAddListClickListener = {
+            val intent = Intent(this, AddListActivity::class.java)
+            startActivityForResult(intent, REQ_CODE_ADD_LIST)
+        }
+        newFrag.onAddAppClickListener = {
+            val intent = Intent(this, AddListActivity::class.java) // todo
+            startActivityForResult(intent, REQ_CODE_ADD_APP)
+        }
+
         newFrag.show(ft, DIALOG_TAG)
     }
 
@@ -53,6 +65,27 @@ class ContextSelectorActivity : AppCompatActivity() {
         tabsLayout.setupWithViewPager(contentPager)
 
         startNotificationService()
+    }
+
+    private var f = false
+    override fun onResume() {
+        super.onResume()
+        if (!f) {
+            startActivityForResult(Intent(this, AddListActivity::class.java), REQ_CODE_ADD_LIST)
+            f = true
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            REQ_CODE_ADD_LIST -> handleAddList()
+            else -> throw IllegalArgumentException("Unknown request code: $requestCode") // TODO: this is fragile, but may prevent unexpected behavior.
+        }
+    }
+
+    private fun handleAddList() {
+        // TODO
     }
 
     private fun startNotificationService() {
