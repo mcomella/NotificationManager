@@ -67,15 +67,6 @@ class ContextSelectorActivity : AppCompatActivity() {
         startNotificationService()
     }
 
-    private var f = false
-    override fun onResume() {
-        super.onResume()
-        if (!f) {
-            startActivityForResult(Intent(this, AddListActivity::class.java), REQ_CODE_ADD_LIST)
-            f = true
-        }
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
