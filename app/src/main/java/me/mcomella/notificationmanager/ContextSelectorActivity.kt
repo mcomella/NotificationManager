@@ -8,6 +8,7 @@ import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
+import android.support.v4.app.FragmentTransaction
 
 import kotlinx.android.synthetic.main.activity_application_list.*
 
@@ -26,8 +27,22 @@ class ContextSelectorActivity : AppCompatActivity() {
         }
         */
         fab.setOnClickListener {
-            // TODO: spawn new selection.
+            showAddToListDialog()
         }
+    }
+
+    // via https://developer.android.com/reference/android/app/DialogFragment.html
+    private val DIALOG_TAG = "dialog"
+    private fun showAddToListDialog() {
+        val ft = supportFragmentManager!!.beginTransaction()
+        val prev = supportFragmentManager!!.findFragmentByTag(DIALOG_TAG)
+        if (prev != null) {
+            ft.remove(prev)
+        }
+        ft.addToBackStack(null)
+
+        val newFrag = AddToListDialogFragment.newInstance()
+        newFrag.show(ft, DIALOG_TAG)
     }
 
     override fun onStart() {
