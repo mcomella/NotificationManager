@@ -14,7 +14,7 @@ import android.widget.ImageView
 import android.widget.Switch
 import android.widget.TextView
 
-import kotlinx.android.synthetic.main.activity_application_list.*
+import kotlinx.android.synthetic.main.activity_blocked_list.*
 
 class BlockedListActivity : AppCompatActivity() {
 
@@ -33,11 +33,9 @@ class BlockedListActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        application_list.adapter = ApplicationListAdapter(this)
-        application_list.setHasFixedSize(true)
-        val layoutManager = LinearLayoutManager(this)
-        layoutManager.orientation = LinearLayoutManager.VERTICAL
-        application_list.layoutManager = layoutManager
+        blockedList.adapter = ApplicationListAdapter(this)
+        blockedList.setHasFixedSize(true)
+        blockedList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         startNotificationService()
     }
 
