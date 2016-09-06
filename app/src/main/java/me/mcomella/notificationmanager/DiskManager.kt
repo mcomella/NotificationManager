@@ -69,6 +69,5 @@ class DiskManager(context: Context) {
     }
 
     private fun getDefaultUserContexts() = listOf(
-            UserContext("Always on",
-                        listOf<String>("An application")))
+            UserContext("Always on", listOf<String>()))
 }

@@ -1,6 +1,8 @@
 package me.mcomella.notificationmanager
 
 import android.content.Context
+import android.content.pm.PackageManager
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -38,7 +40,6 @@ class ApplicationListFragment() : Fragment() {
 
         val applicationList = rootView.findViewById(R.id.applicationList) as RecyclerView
         applicationList.adapter = ApplicationListAdapter(context, apps)
-        applicationList.setHasFixedSize(true)
         applicationList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
     }
 }
@@ -60,9 +61,19 @@ private class ApplicationListAdapter(context: Context, val apps: List<String>) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val app = apps[position]
-        holder.title.text = app
-        //holder.icon.setImageDrawable(app.icon)
+        val label: CharSequence
+        val icon: Drawable?
+        val pkgName = apps[position]
+        try {
+            val appInfo = pkgManager.getApplicationInfo(pkgName, 0)
+            label = appInfo.loadLabel(pkgManager)
+            icon = appInfo.loadIcon(pkgManager)
+        } catch (e: PackageManager.NameNotFoundException) {
+            label = pkgName
+            icon = null
+        }
+        holder.title.text = label
+        holder.icon.setImageDrawable(icon)
 
         holder.toggle.isChecked = true
         /*

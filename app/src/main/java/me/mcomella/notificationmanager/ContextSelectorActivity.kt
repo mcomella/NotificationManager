@@ -4,10 +4,13 @@ import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Looper
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
+import android.support.v4.view.PagerAdapter
+import android.view.ViewGroup
 
 import kotlinx.android.synthetic.main.activity_application_list.*
 
@@ -51,6 +54,7 @@ class ContextSelectorActivity : AppCompatActivity() {
         }
         newFrag.onAddAppClickListener = {
             val intent = Intent(this, AddAppActivity::class.java) // todo
+            intent.putExtra(AddAppActivity.KEY_USER_CONTEXT_INDEX, tabsLayout.selectedTabPosition)
             startActivityForResult(intent, REQ_CODE_ADD_APP)
         }
 
@@ -73,8 +77,12 @@ class ContextSelectorActivity : AppCompatActivity() {
         val innerRes = if (data != null) data.getBundleExtra(KEY_BUNDLE) else Bundle()
         when (requestCode) {
             REQ_CODE_ADD_LIST -> {
-                if (data == null) throw IllegalArgumentException("Data unexpectedly null")
+                if (data == null) throw IllegalArgumentException("Data unexpectedly null") // TODO: repetition
                 handleAddList(innerRes)
+            }
+            REQ_CODE_ADD_APP -> {
+                if (data == null) throw IllegalArgumentException("Data unexpectedly null")
+                handleAddApp(innerRes)
             }
             //else -> throw IllegalArgumentException("Unknown request code: $requestCode") // TODO: this is fragile, but may prevent unexpected behavior.
         }
@@ -88,8 +96,30 @@ class ContextSelectorActivity : AppCompatActivity() {
         val userContexts = diskManager.readUserContextsFromDisk()
         val modified = userContexts + UserContext(name = listTitle,
                                                   apps = listOf<String>())
-        diskManager.saveUserContextsToDisk(modified)
+        persistContextsAndRefresh(modified)
+    }
 
+    private fun handleAddApp(result: Bundle) {
+        val pkgName = result.getString(AddAppActivity.KEY_PKG_NAME)
+        val listIndex = result.getInt(AddAppActivity.KEY_USER_CONTEXT_INDEX, -3)
+        if (listIndex < 0) throw IllegalArgumentException("listIndex unexpectedly less than 0: $listIndex")
+
+        // TODO: terribly inefficient.
+        val diskManager = DiskManager(this)
+        val userContexts = diskManager.readUserContextsFromDisk().toMutableList()
+
+        val replaced = userContexts[listIndex]
+        val modifiedApps = (replaced.apps + pkgName).sortedBy {
+            packageManager.getApplicationInfo(pkgName, 0).loadLabel(packageManager).toString()
+        }
+        userContexts[listIndex] = UserContext(replaced.name, modifiedApps)
+
+        persistContextsAndRefresh(userContexts)
+    }
+
+    private fun persistContextsAndRefresh(contexts: List<UserContext>) {
+        val diskManager = DiskManager(this)
+        diskManager.saveUserContextsToDisk(contexts)
         contentPager.adapter = UserContextAdapter(this, supportFragmentManager) // refreshes data.
     }
 
