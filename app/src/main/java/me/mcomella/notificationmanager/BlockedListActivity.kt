@@ -16,11 +16,11 @@ import android.widget.TextView
 
 import kotlinx.android.synthetic.main.activity_application_list.*
 
-class ApplicationListActivity : AppCompatActivity() {
+class BlockedListActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_application_list)
+        setContentView(R.layout.activity_blocked_list)
         attachClickListeners()
     }
 
