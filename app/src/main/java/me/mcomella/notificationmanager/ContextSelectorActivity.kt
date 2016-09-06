@@ -29,13 +29,13 @@ class ContextSelectorActivity : AppCompatActivity() {
         }
         */
         fab.setOnClickListener {
-            showAddToListDialog()
+            showSelectAddToDialog()
         }
     }
 
     // via https://developer.android.com/reference/android/app/DialogFragment.html
     private val DIALOG_TAG = "dialog"
-    private fun showAddToListDialog() {
+    private fun showSelectAddToDialog() {
         val ft = supportFragmentManager!!.beginTransaction()
         val prev = supportFragmentManager!!.findFragmentByTag(DIALOG_TAG)
         if (prev != null) {
@@ -43,7 +43,7 @@ class ContextSelectorActivity : AppCompatActivity() {
         }
         ft.addToBackStack(null)
 
-        val newFrag = AddToListDialogFragment.newInstance()
+        val newFrag = SelectAddToDialogFragment.newInstance()
 
         newFrag.onAddListClickListener = {
             val intent = Intent(this, AddListActivity::class.java)
