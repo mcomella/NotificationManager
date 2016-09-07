@@ -16,6 +16,8 @@ import me.mcomella.notificationmanager.ext.use
 import java.lang.ref.WeakReference
 import java.util.*
 
+private val DISABLED_ITEM_ALPHA = 0.50f
+
 class BlockedListActivity : AppCompatActivity() {
     companion object {
         val KEY_BUNDLE = "bundle"
@@ -130,12 +132,12 @@ private class BlockedListAdapter(activity: Activity) : RecyclerView.Adapter<Bloc
         holder.title.text = appInfo.loadLabel(pkgManager)
         holder.icon.setImageDrawable(appInfo.loadIcon(pkgManager))
 
-        setSubtitleViewVisibility(holder.subtitleView, app.checked)
+        setForCheckedState(holder, app.checked)
         holder.toggle.isChecked = app.checked
         holder.toggle.setOnCheckedChangeListener { buttonView, isChecked ->
             // Thread-safe: only updated from UI thread.
             // Since toggle updates automatically, I don't think we need notifyDatasetChanged
-            setSubtitleViewVisibility(holder.subtitleView, isChecked)
+            setForCheckedState(holder, isChecked)
             apps[position] = BlockedAppInfo(app.pkgname, isChecked) // Since toggle updates
             diskManager.saveAppsToDisk(apps)
         }
@@ -147,8 +149,9 @@ private class BlockedListAdapter(activity: Activity) : RecyclerView.Adapter<Bloc
         registerForContextMenu(holder.rootView)
     }
 
-    private fun setSubtitleViewVisibility(view: View, isChecked: Boolean) {
-        view.visibility = if (isChecked) View.VISIBLE else View.GONE
+    private fun setForCheckedState(holder: ApplicationListViewHolder, isChecked: Boolean) {
+        holder.subtitleView.visibility = if (isChecked) View.VISIBLE else View.GONE
+        holder.rootView.alpha = if (isChecked) 1f else DISABLED_ITEM_ALPHA
     }
 
     private fun registerForContextMenu(view: View) {
