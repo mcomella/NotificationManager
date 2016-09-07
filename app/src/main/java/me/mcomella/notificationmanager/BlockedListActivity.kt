@@ -75,13 +75,7 @@ class BlockedListActivity : AppCompatActivity() {
     }
 }
 
-private class ApplicationListViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
-    val title = itemView!!.findViewById(R.id.title) as TextView
-    val icon = itemView!!.findViewById(R.id.icon) as ImageView
-    val toggle = itemView!!.findViewById(R.id.toggle) as Switch
-}
-
-private class BlockedListAdapter(context: Context) : RecyclerView.Adapter<ApplicationListViewHolder>() {
+private class BlockedListAdapter(context: Context) : RecyclerView.Adapter<BlockedListAdapter.ApplicationListViewHolder>() {
 
     val pkgManager = context.packageManager
     val diskManager = DiskManager(context)
@@ -114,5 +108,13 @@ private class BlockedListAdapter(context: Context) : RecyclerView.Adapter<Applic
             apps[position] = BlockedAppInfo(app.pkgname, isChecked) // Since toggle updates
             diskManager.saveAppsToDisk(apps)
         }
+        holder.rootView.setOnClickListener { holder.toggle.toggle() }
+    }
+
+    private class ApplicationListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val rootView = itemView
+        val title = itemView!!.findViewById(R.id.title) as TextView
+        val icon = itemView!!.findViewById(R.id.icon) as ImageView
+        val toggle = itemView!!.findViewById(R.id.toggle) as Switch
     }
 }
