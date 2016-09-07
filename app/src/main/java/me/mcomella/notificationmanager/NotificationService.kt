@@ -31,7 +31,7 @@ class NotificationService : NotificationListenerService() {
     override fun onNotificationPosted(sbn: StatusBarNotification) {
         super.onNotificationPosted(sbn)
         Log.d(TAG, "onNotificationPosted: $sbn")
-        if (!appsAndState.getOrElse(sbn.packageName, {true})) {
+        if (appsAndState.getOrElse(sbn.packageName, {false})) {
             Log.d(TAG, "Cancelling notification for package: ${sbn.packageName}")
             cancelNotification(sbn.key)
         }
