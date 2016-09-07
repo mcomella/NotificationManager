@@ -87,7 +87,7 @@ private class BlockedListAdapter(context: Context) : RecyclerView.Adapter<Applic
     val diskManager = DiskManager(context)
     val apps = diskManager.readAppsFromDisk().sortedBy {
         pkgManager.getApplicationInfo(it.pkgname, 0).loadLabel(pkgManager).toString()
-    }
+    } as MutableList<BlockedAppInfo>
 
     override fun getItemCount(): Int {
         return apps.size
@@ -110,9 +110,9 @@ private class BlockedListAdapter(context: Context) : RecyclerView.Adapter<Applic
         holder.toggle.isChecked = app.checked
         holder.toggle.setOnCheckedChangeListener { buttonView, isChecked ->
             // Thread-safe: only updated from UI thread.
-            val mutableApps = apps.toMutableList()
-            mutableApps[position] = BlockedAppInfo(app.pkgname, isChecked)
-            diskManager.saveAppsToDisk(mutableApps)
+            // Since toggle updates automatically, I don't think we need notifyDatasetChanged
+            apps[position] = BlockedAppInfo(app.pkgname, isChecked) // Since toggle updates
+            diskManager.saveAppsToDisk(apps)
         }
     }
 }
