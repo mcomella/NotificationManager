@@ -130,10 +130,12 @@ private class BlockedListAdapter(activity: Activity) : RecyclerView.Adapter<Bloc
         holder.title.text = appInfo.loadLabel(pkgManager)
         holder.icon.setImageDrawable(appInfo.loadIcon(pkgManager))
 
+        setSubtitleViewVisibility(holder.subtitleView, app.checked)
         holder.toggle.isChecked = app.checked
         holder.toggle.setOnCheckedChangeListener { buttonView, isChecked ->
             // Thread-safe: only updated from UI thread.
             // Since toggle updates automatically, I don't think we need notifyDatasetChanged
+            setSubtitleViewVisibility(holder.subtitleView, isChecked)
             apps[position] = BlockedAppInfo(app.pkgname, isChecked) // Since toggle updates
             diskManager.saveAppsToDisk(apps)
         }
@@ -143,6 +145,10 @@ private class BlockedListAdapter(activity: Activity) : RecyclerView.Adapter<Bloc
             false
         }
         registerForContextMenu(holder.rootView)
+    }
+
+    private fun setSubtitleViewVisibility(view: View, isChecked: Boolean) {
+        view.visibility = if (isChecked) View.VISIBLE else View.GONE
     }
 
     private fun registerForContextMenu(view: View) {
@@ -156,6 +162,7 @@ private class BlockedListAdapter(activity: Activity) : RecyclerView.Adapter<Bloc
     private class ApplicationListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val rootView = itemView
         val title = itemView!!.findViewById(R.id.title) as TextView
+        val subtitleView = itemView.findViewById(R.id.subtitleView)
         val icon = itemView!!.findViewById(R.id.icon) as ImageView
         val toggle = itemView!!.findViewById(R.id.toggle) as Switch
     }
