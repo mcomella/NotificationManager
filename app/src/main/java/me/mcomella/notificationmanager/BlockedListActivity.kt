@@ -1,5 +1,6 @@
 package me.mcomella.notificationmanager
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
@@ -49,6 +50,8 @@ class BlockedListActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode != Activity.RESULT_OK) return
+
         val innerRes = if (data == null) Bundle() else data.getBundleExtra(KEY_BUNDLE)
         when (requestCode) {
             REQ_CODE_ADD_APP -> handleAddApp(innerRes)
