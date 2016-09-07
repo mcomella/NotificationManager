@@ -14,8 +14,14 @@ import android.widget.Switch
 import android.widget.TextView
 
 import kotlinx.android.synthetic.main.activity_blocked_list.*
+import java.util.*
 
 class BlockedListActivity : AppCompatActivity() {
+    companion object {
+        val KEY_BUNDLE = "bundle"
+
+        val REQ_CODE_ADD_APP = 1999
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,8 +30,11 @@ class BlockedListActivity : AppCompatActivity() {
     }
 
     private fun attachClickListeners() {
-        notification_settings_button.setOnClickListener {
-            startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
+        addAppButton.setOnClickListener {
+            val blockedApps = (blockedList.adapter as BlockedListAdapter).apps.map { it.pkgName }
+            val intent = Intent(this, AddAppActivity::class.java)
+            intent.putExtra(AddAppActivity.KEY_BLOCKED_APPS, ArrayList(blockedApps))
+            startActivityForResult(intent, REQ_CODE_ADD_APP)
         }
     }
 
@@ -36,6 +45,25 @@ class BlockedListActivity : AppCompatActivity() {
         blockedList.setHasFixedSize(true)
         blockedList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         startNotificationService()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        val innerRes = if (data == null) Bundle() else data.getBundleExtra(KEY_BUNDLE)
+        when (requestCode) {
+            //REQ_CODE_ADD_APP -> handleAddApp(innerRes)
+        }
+    }
+
+    private fun handleAddApp(res: Bundle) {
+
+        val addedApp = res.getString(AddAppActivity.KEY_ADDED_APP)
+
+        val diskManager = DiskManager(this)
+        val blockedApps = diskManager.readAppsFromDisk().toMutableList()
+
+        diskManager.saveAppsToDisk(blockedApps + BlockedAppInfo(addedApp, true))
+        blockedList.adapter = BlockedListAdapter(this)
     }
 
     private fun startNotificationService() {
@@ -66,7 +94,7 @@ private class BlockedListAdapter(context: Context) : RecyclerView.Adapter<Applic
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ApplicationListViewHolder {
         val view = LayoutInflater.
                 from(parent!!.context).
-                inflate(R.layout.application_item, parent, false)
+                inflate(R.layout.blocked_list_item, parent, false)
         return ApplicationListViewHolder(view)
     }
 
