@@ -19,8 +19,8 @@ class NotificationService : NotificationListenerService() {
 
     private val diskManager: DiskManager
         get() = DiskManager(this) // TODO: fragile. underlying filesDir is null at init time but not when accessed later.
-    private val appsAndState: Map<String, Boolean>
-        get() = diskManager.readApplicationsFromDisk() // TODO: getting from disk each time inefficient. send refresh signals.
+    private val appsAndState: Map<String, Boolean> // TODO: getting from disk each time inefficient. send refresh signals.
+        get() = diskManager.readAppsFromDisk().associateBy({it.pkgName}, {it.isChecked})
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         Log.d(TAG, "onStartCommand")
@@ -30,9 +30,9 @@ class NotificationService : NotificationListenerService() {
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
         super.onNotificationPosted(sbn)
-        Log.d(TAG, "onNotificationPosted: " + sbn)
+        Log.d(TAG, "onNotificationPosted: $sbn")
         if (!appsAndState.getOrElse(sbn.packageName, {true})) {
-            Log.d(TAG, "Cancelling notification for package: " + sbn.packageName)
+            Log.d(TAG, "Cancelling notification for package: ${sbn.packageName}")
             cancelNotification(sbn.key)
         }
     }

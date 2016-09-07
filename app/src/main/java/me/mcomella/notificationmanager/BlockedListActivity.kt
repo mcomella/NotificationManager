@@ -2,7 +2,6 @@ package me.mcomella.notificationmanager
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -33,7 +32,7 @@ class BlockedListActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        blockedList.adapter = ApplicationListAdapter(this)
+        blockedList.adapter = BlockedListAdapter(this)
         blockedList.setHasFixedSize(true)
         blockedList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         startNotificationService()
@@ -52,25 +51,16 @@ private class ApplicationListViewHolder(itemView: View?) : RecyclerView.ViewHold
     val toggle = itemView!!.findViewById(R.id.toggle) as Switch
 }
 
-private class ApplicationListAdapter(context: Context) : RecyclerView.Adapter<ApplicationListViewHolder>() {
+private class BlockedListAdapter(context: Context) : RecyclerView.Adapter<ApplicationListViewHolder>() {
 
+    val pkgManager = context.packageManager
     val diskManager = DiskManager(context)
-
-    // TODO: make temp vars not properties
-    // TODO: lazy? (especially icons)
-    // TODO: filter on system pkgs? http://stackoverflow.com/a/8483920? enabled apps?
-    private val _installedApps = context.packageManager.getInstalledApplications(0)
-    private val _appsAndStateOnDisk = diskManager.readApplicationsFromDisk()
-    val installedAppInfo = _installedApps.map {
-        val pkgManager = context.packageManager
-        AppInfo(pkgName = it.packageName,
-                label = it.loadLabel(pkgManager).toString(),
-                icon = it.loadIcon(pkgManager),
-                isChecked = _appsAndStateOnDisk.getOrElse(it.packageName, { true }))
-    }.sortedBy { it.label }
+    val apps = diskManager.readAppsFromDisk().sortedBy {
+        pkgManager.getApplicationInfo(it.pkgName, 0).loadLabel(pkgManager).toString()
+    }
 
     override fun getItemCount(): Int {
-        return installedAppInfo.size
+        return apps.size
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ApplicationListViewHolder {
@@ -81,18 +71,18 @@ private class ApplicationListAdapter(context: Context) : RecyclerView.Adapter<Ap
     }
 
     override fun onBindViewHolder(holder: ApplicationListViewHolder, position: Int) {
-        val app = installedAppInfo[position]
-        holder.title.text = app.label
-        holder.icon.setImageDrawable(app.icon)
+        val app = apps[position]
+        val appInfo = pkgManager.getApplicationInfo(app.pkgName, 0)
+
+        holder.title.text = appInfo.loadLabel(pkgManager)
+        holder.icon.setImageDrawable(appInfo.loadIcon(pkgManager))
 
         holder.toggle.isChecked = app.isChecked
         holder.toggle.setOnCheckedChangeListener { buttonView, isChecked ->
             // Thread-safe: only updated from UI thread.
-            app.isChecked = isChecked
-            diskManager.saveApplicationsToDisk(installedAppInfo.associateBy({it.pkgName}, {it.isChecked})) // TODO: converting each time is slow.
+            val mutableApps = apps.toMutableList()
+            mutableApps[position] = BlockedAppInfo(app.pkgName, isChecked)
+            diskManager.saveAppsToDisk(mutableApps)
         }
     }
-
-    // TODO: This name collides with ApplicationInfo.
-    private data class AppInfo(val pkgName: String, val label: String, val icon: Drawable, var isChecked: Boolean)
 }
