@@ -1,20 +1,19 @@
 package me.mcomella.notificationmanager
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageView
 import android.widget.Switch
 import android.widget.TextView
 
 import kotlinx.android.synthetic.main.activity_blocked_list.*
+import me.mcomella.notificationmanager.ext.use
+import java.lang.ref.WeakReference
 import java.util.*
 
 class BlockedListActivity : AppCompatActivity() {
@@ -65,7 +64,18 @@ class BlockedListActivity : AppCompatActivity() {
         val blockedApps = diskManager.readAppsFromDisk().toMutableList()
 
         diskManager.saveAppsToDisk(blockedApps + BlockedAppInfo(addedApp, true))
-        blockedList.adapter = BlockedListAdapter(this) // refreshes data.
+        refreshAdapter()
+    }
+
+    private fun handleRemoveApp(appToRemove: BlockedAppInfo) {
+        val diskManager = DiskManager(this)
+        val appsToSave = diskManager.readAppsFromDisk().filter { it != appToRemove }
+        diskManager.saveAppsToDisk(appsToSave)
+        refreshAdapter()
+    }
+
+    private fun refreshAdapter() {
+        blockedList.adapter = BlockedListAdapter(this)
     }
 
     private fun startNotificationService() {
@@ -73,15 +83,34 @@ class BlockedListActivity : AppCompatActivity() {
         val intent = Intent(this, NotificationService::class.java)
         startService(intent) // TODO: start service on device startup too.
     }
+
+    override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
+        super.onCreateContextMenu(menu, v, menuInfo)
+        menuInflater.inflate(R.menu.blocked_list_context_menu, menu)
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        val blockedApp = (blockedList.adapter as BlockedListAdapter).getLongClickedApp()
+        return when (item.itemId) {
+            R.id.removeApp -> {
+                handleRemoveApp(blockedApp)
+                true
+            }
+            else -> super.onContextItemSelected(item)
+        }
+    }
 }
 
-private class BlockedListAdapter(context: Context) : RecyclerView.Adapter<BlockedListAdapter.ApplicationListViewHolder>() {
+private class BlockedListAdapter(activity: Activity) : RecyclerView.Adapter<BlockedListAdapter.ApplicationListViewHolder>() {
+    val activityWeakReference = WeakReference(activity)
 
-    val pkgManager = context.packageManager
-    val diskManager = DiskManager(context)
+    val pkgManager = activity.packageManager
+    val diskManager = DiskManager(activity)
     val apps = diskManager.readAppsFromDisk().sortedBy {
         pkgManager.getApplicationInfo(it.pkgname, 0).loadLabel(pkgManager).toString()
-    } as MutableList<BlockedAppInfo>
+    }.toMutableList()
+
+    private var longClickPosition: Int = -1
 
     override fun getItemCount(): Int {
         return apps.size
@@ -109,7 +138,20 @@ private class BlockedListAdapter(context: Context) : RecyclerView.Adapter<Blocke
             diskManager.saveAppsToDisk(apps)
         }
         holder.rootView.setOnClickListener { holder.toggle.toggle() }
+        holder.rootView.setOnLongClickListener {
+            longClickPosition = position
+            false
+        }
+        registerForContextMenu(holder.rootView)
     }
+
+    private fun registerForContextMenu(view: View) {
+        activityWeakReference.use {
+            it.registerForContextMenu(view)
+        }
+    }
+
+    fun getLongClickedApp(): BlockedAppInfo = apps[longClickPosition]
 
     private class ApplicationListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val rootView = itemView
