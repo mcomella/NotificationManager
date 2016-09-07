@@ -5,7 +5,9 @@ import com.fasterxml.jackson.module.kotlin.*
 import java.io.File
 
 class DiskManager(context: Context) {
-    val file = File(context.filesDir, "apps.json")
+    private val SCHEMA = 1 // to iterate on format without causing crashes.
+
+    val file = File(context.filesDir, "apps${SCHEMA}.json")
 
     fun saveAppsToDisk(apps: List<BlockedAppInfo>) {
         jacksonObjectMapper().writeValue(file, apps)
