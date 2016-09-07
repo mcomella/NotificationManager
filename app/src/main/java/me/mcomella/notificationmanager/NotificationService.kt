@@ -20,7 +20,7 @@ class NotificationService : NotificationListenerService() {
     private val diskManager: DiskManager
         get() = DiskManager(this) // TODO: fragile. underlying filesDir is null at init time but not when accessed later.
     private val appsAndState: Map<String, Boolean> // TODO: getting from disk each time inefficient. send refresh signals.
-        get() = diskManager.readAppsFromDisk().associateBy({it.pkgName}, {it.isChecked})
+        get() = diskManager.readAppsFromDisk().associateBy({it.pkgname }, {it.checked })
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         Log.d(TAG, "onStartCommand")

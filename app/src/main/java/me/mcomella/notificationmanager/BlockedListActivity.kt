@@ -31,7 +31,7 @@ class BlockedListActivity : AppCompatActivity() {
 
     private fun attachClickListeners() {
         addAppButton.setOnClickListener {
-            val blockedApps = (blockedList.adapter as BlockedListAdapter).apps.map { it.pkgName }
+            val blockedApps = (blockedList.adapter as BlockedListAdapter).apps.map { it.pkgname }
             val intent = Intent(this, AddAppActivity::class.java)
             intent.putExtra(AddAppActivity.KEY_BLOCKED_APPS, ArrayList(blockedApps))
             startActivityForResult(intent, REQ_CODE_ADD_APP)
@@ -51,19 +51,18 @@ class BlockedListActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         val innerRes = if (data == null) Bundle() else data.getBundleExtra(KEY_BUNDLE)
         when (requestCode) {
-            //REQ_CODE_ADD_APP -> handleAddApp(innerRes)
+            REQ_CODE_ADD_APP -> handleAddApp(innerRes)
         }
     }
 
     private fun handleAddApp(res: Bundle) {
-
         val addedApp = res.getString(AddAppActivity.KEY_ADDED_APP)
 
         val diskManager = DiskManager(this)
         val blockedApps = diskManager.readAppsFromDisk().toMutableList()
 
         diskManager.saveAppsToDisk(blockedApps + BlockedAppInfo(addedApp, true))
-        blockedList.adapter = BlockedListAdapter(this)
+        blockedList.adapter = BlockedListAdapter(this) // refreshes data.
     }
 
     private fun startNotificationService() {
@@ -84,7 +83,7 @@ private class BlockedListAdapter(context: Context) : RecyclerView.Adapter<Applic
     val pkgManager = context.packageManager
     val diskManager = DiskManager(context)
     val apps = diskManager.readAppsFromDisk().sortedBy {
-        pkgManager.getApplicationInfo(it.pkgName, 0).loadLabel(pkgManager).toString()
+        pkgManager.getApplicationInfo(it.pkgname, 0).loadLabel(pkgManager).toString()
     }
 
     override fun getItemCount(): Int {
@@ -100,16 +99,16 @@ private class BlockedListAdapter(context: Context) : RecyclerView.Adapter<Applic
 
     override fun onBindViewHolder(holder: ApplicationListViewHolder, position: Int) {
         val app = apps[position]
-        val appInfo = pkgManager.getApplicationInfo(app.pkgName, 0)
+        val appInfo = pkgManager.getApplicationInfo(app.pkgname, 0)
 
         holder.title.text = appInfo.loadLabel(pkgManager)
         holder.icon.setImageDrawable(appInfo.loadIcon(pkgManager))
 
-        holder.toggle.isChecked = app.isChecked
+        holder.toggle.isChecked = app.checked
         holder.toggle.setOnCheckedChangeListener { buttonView, isChecked ->
             // Thread-safe: only updated from UI thread.
             val mutableApps = apps.toMutableList()
-            mutableApps[position] = BlockedAppInfo(app.pkgName, isChecked)
+            mutableApps[position] = BlockedAppInfo(app.pkgname, isChecked)
             diskManager.saveAppsToDisk(mutableApps)
         }
     }
