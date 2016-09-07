@@ -28,6 +28,10 @@ class AddAppActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_app)
         supportActionBar!!.setTitle("Add application")
+    }
+
+    override fun onStart() {
+        super.onStart()
         initAppList()
     }
 
