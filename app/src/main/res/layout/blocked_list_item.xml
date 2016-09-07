@@ -2,16 +2,18 @@
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
+        style="@style/AppItemContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="?attr/selectableItemBackground">
+>
 
-    <!-- TODO: wrap_content assumes images are all the same size -->
     <ImageView
+            style="@style/AppIcon"
             android:id="@+id/icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_width="@dimen/icon_size"
+            android:layout_height="@dimen/icon_size"
+    />
 
     <LinearLayout
             android:layout_width="0dp"
@@ -21,19 +23,19 @@
     >
 
         <TextView
+                android:textAppearance="@style/TitleText"
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:text="lol"
                 android:gravity="center_vertical"
                 tools:text="Phone dialer"/>
 
         <TextView
+                android:textAppearance="@style/SubtitleText"
                 android:id="@+id/subtitleView"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:text="Blocked"
                 tools:text="Blocked"
