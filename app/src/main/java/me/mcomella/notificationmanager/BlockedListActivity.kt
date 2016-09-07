@@ -16,6 +16,8 @@ import me.mcomella.notificationmanager.ext.use
 import java.lang.ref.WeakReference
 import java.util.*
 
+val TAG = "NTFY"
+
 private val DISABLED_ITEM_ALPHA = 0.50f
 
 class BlockedListActivity : AppCompatActivity() {

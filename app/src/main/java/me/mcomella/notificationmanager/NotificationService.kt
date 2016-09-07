@@ -8,7 +8,6 @@ import android.service.notification.StatusBarNotification
 import android.util.Log
 
 class NotificationService : NotificationListenerService() {
-    private val TAG = "lol"
     private val FOREGROUND_ID = 4321
 
     private val foregroundNotification: Notification
