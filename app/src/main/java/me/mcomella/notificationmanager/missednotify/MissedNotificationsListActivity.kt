@@ -68,11 +68,10 @@ private class MissedNotificationsAdapter(context: Context) :
     override fun onBindViewHolder(holder: MissedNotificationsViewHolder, position: Int) {
         val notification = notifications[position]
         val appInfo = pkgManager.getApplicationInfo(notification.pkgname, 0)
-        val appTitle = appInfo.loadLabel(pkgManager)
         val appIcon = appInfo.loadIcon(pkgManager) // TODO: NOTIFICATION icons aren't necessarily app icons
 
-        holder.titleView.text = appTitle
-        holder.subtitleView.text = notification.title
+        holder.titleView.text = notification.title
+        holder.subtitleView.text = notification.contenttext
         holder.iconView.setImageDrawable(appIcon)
     }
 
