@@ -6,6 +6,8 @@ import android.os.IBinder
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
+import me.mcomella.notificationmanager.missednotify.MissedNotification
+import me.mcomella.notificationmanager.missednotify.MissedNotificationsDiskManager
 
 class NotificationService : NotificationListenerService() {
     private val FOREGROUND_ID = 4321
@@ -33,7 +35,20 @@ class NotificationService : NotificationListenerService() {
         if (appsAndState.getOrElse(sbn.packageName, {false})) {
             Log.d(TAG, "Cancelling notification for package: ${sbn.packageName}")
             cancelNotification(sbn.key)
+            saveNotificationToDisk(sbn)
         }
+    }
+
+    private fun saveNotificationToDisk(sbn: StatusBarNotification) {
+        val notification = sbn.notification
+        val extras = notification.extras
+
+        val missedNotification = MissedNotification(pkgname = sbn.packageName,
+                posttime = sbn.postTime,
+                title = extras.getString(Notification.EXTRA_TITLE, "TITLE"),
+                contenttext = extras.getString(Notification.EXTRA_TEXT, "CONTENT TEXT"))
+
+        MissedNotificationsDiskManager(this).prependNotificationToDisk(missedNotification)
     }
 
     override fun onBind(intent: Intent): IBinder? {

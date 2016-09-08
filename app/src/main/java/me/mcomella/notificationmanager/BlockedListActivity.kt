@@ -13,6 +13,7 @@ import android.widget.TextView
 
 import kotlinx.android.synthetic.main.activity_blocked_list.*
 import me.mcomella.notificationmanager.ext.use
+import me.mcomella.notificationmanager.missednotify.MissedNotificationsListActivity
 import java.lang.ref.WeakReference
 import java.util.*
 
@@ -88,6 +89,11 @@ class BlockedListActivity : AppCompatActivity() {
         startService(intent) // TODO: start service on device startup too.
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.toolbar_menu, menu)
+        return true
+    }
+
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
         super.onCreateContextMenu(menu, v, menuInfo)
         menuInflater.inflate(R.menu.blocked_list_context_menu, menu)
@@ -101,6 +107,17 @@ class BlockedListActivity : AppCompatActivity() {
                 true
             }
             else -> super.onContextItemSelected(item)
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.showMissedNotifications -> {
+                val intent = Intent(this, MissedNotificationsListActivity::class.java)
+                startActivity(intent)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 }

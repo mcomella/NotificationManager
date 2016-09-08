@@ -24,11 +24,13 @@
     <style name="TitleText" parent="@android:style/TextAppearance">
         <item name="android:textColor">@color/titleText</item>
         <item name="android:textSize">18sp</item>
+        <item name="android:maxLines">1</item>
     </style>
 
     <style name="SubtitleText" parent="@android:style/TextAppearance">
         <item name="android:textColor">@color/subtitleText</item>
         <item name="android:textSize">14sp</item>
+        <item name="android:maxLines">1</item>
     </style>
 
 </resources>
