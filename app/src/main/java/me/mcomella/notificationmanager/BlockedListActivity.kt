@@ -28,6 +28,18 @@ class BlockedListActivity : AppCompatActivity() {
         val REQ_CODE_ADD_APP = 1999
     }
 
+    /** Manages empty state. Pretty shitty - this setter should be on the list of apps data structure. */
+    var isEmpty = false
+        set(isEmpty: Boolean) {
+            if (isEmpty) {
+                blockedList.visibility = View.GONE
+                emptyState.visibility = View.VISIBLE
+            } else {
+                blockedList.visibility = View.VISIBLE
+                emptyState.visibility = View.GONE
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_blocked_list)
@@ -45,6 +57,8 @@ class BlockedListActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+
+        isEmpty = DiskManager(this).readAppsFromDisk().isEmpty()
 
         blockedList.adapter = BlockedListAdapter(this)
         blockedList.setHasFixedSize(true)
@@ -70,6 +84,7 @@ class BlockedListActivity : AppCompatActivity() {
 
         diskManager.saveAppsToDisk(blockedApps + BlockedAppInfo(addedApp, true))
         refreshAdapter()
+        isEmpty = false
     }
 
     private fun handleRemoveApp(appToRemove: BlockedAppInfo) {
@@ -77,6 +92,7 @@ class BlockedListActivity : AppCompatActivity() {
         val appsToSave = diskManager.readAppsFromDisk().filter { it != appToRemove }
         diskManager.saveAppsToDisk(appsToSave)
         refreshAdapter()
+        isEmpty = appsToSave.isEmpty()
     }
 
     private fun refreshAdapter() {

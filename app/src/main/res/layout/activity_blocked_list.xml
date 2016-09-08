@@ -24,4 +24,32 @@
             android:tint="@color/textColorPrimary"
             />
 
+    <LinearLayout
+        android:id="@+id/emptyState"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:gravity="center_horizontal"
+        android:visibility="gone"
+    >
+
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/empty_state"
+                android:scaleType="centerInside"
+                android:layout_marginBottom="-30dp"
+        />
+
+        <TextView
+                style="@style/TitleText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add any apps you want to hide from!"
+        />
+
+    </LinearLayout>
+
 </merge>
