@@ -49,8 +49,11 @@ private class MissedNotificationsAdapter(context: Context) :
         val notification = notifications[position]
         val appInfo = pkgManager.getApplicationInfo(notification.pkgname, 0)
         val appTitle = appInfo.loadLabel(pkgManager)
+        val appIcon = appInfo.loadIcon(pkgManager) // TODO: NOTIFICATION icons aren't necessarily app icons
+
         holder.titleView.text = appTitle
         holder.subtitleView.text = notification.title
+        holder.iconView.setImageDrawable(appIcon)
     }
 
     override fun getItemCount() = notifications.size
