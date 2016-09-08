@@ -90,7 +90,7 @@ class BlockedListActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.toolbar_menu, menu)
+        menuInflater.inflate(R.menu.activity_blocked_list_menu, menu)
         return true
     }
 
