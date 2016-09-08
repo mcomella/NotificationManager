@@ -58,7 +58,7 @@ private class MissedNotificationsAdapter(context: Context) :
         RecyclerView.Adapter<MissedNotificationsAdapter.MissedNotificationsViewHolder>() {
 
     private val pkgManager = context.packageManager
-    val notifications = MissedNotificationsDiskManager(context).readNotificationsFromDisk() // TODO: sort
+    val notifications = MissedNotificationsDiskManager(context).readNotificationsFromDisk().sortedByDescending { it.posttime }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): MissedNotificationsViewHolder {
         val view = LayoutInflater.from(parent!!.context).inflate(R.layout.missed_notification_list_item, parent, false)
