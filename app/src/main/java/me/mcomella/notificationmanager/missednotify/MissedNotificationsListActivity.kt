@@ -10,6 +10,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_missed_notifications_list.*
 import me.mcomella.notificationmanager.R
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class MissedNotificationsListActivity : AppCompatActivity() {
 
@@ -73,6 +76,13 @@ private class MissedNotificationsAdapter(context: Context) :
         holder.titleView.text = notification.title
         holder.subtitleView.text = notification.contenttext
         holder.iconView.setImageDrawable(appIcon)
+        holder.postTimeView.text = convertMillisToDate(notification.posttime)
+    }
+
+    private fun convertMillisToDate(millis: Long): String {
+        val date = Date(millis)
+        val dateFormat = SimpleDateFormat("h:mm a", Locale.US)
+        return dateFormat.format(date)
     }
 
     override fun getItemCount() = notifications.size
@@ -81,5 +91,6 @@ private class MissedNotificationsAdapter(context: Context) :
         val iconView = view.findViewById(R.id.iconView) as ImageView
         val titleView = view.findViewById(R.id.titleView) as TextView
         val subtitleView = view.findViewById(R.id.subtitleView) as TextView
+        val postTimeView = view.findViewById(R.id.postTimeView) as TextView
     }
 }
