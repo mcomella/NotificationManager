@@ -9,6 +9,11 @@ class MissedNotificationsDiskManager(context: Context) {
 
     private val file = File(context.filesDir, "missedNotifications${SCHEMA}.json")
 
+    fun clearAllNotifications() {
+        file.delete()
+        file.createNewFile()
+    }
+
     // TODO: lock file or methods
     // TODO: prepend or append?
     fun prependNotificationToDisk(notification: MissedNotification) {

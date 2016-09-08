@@ -2,13 +2,10 @@ package me.mcomella.notificationmanager.missednotify
 
 import android.content.Context
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_missed_notifications_list.*
@@ -31,6 +28,29 @@ class MissedNotificationsListActivity : AppCompatActivity() {
         missedNotificationsList.adapter = MissedNotificationsAdapter(this)
         missedNotificationsList.setHasFixedSize(true)
         missedNotificationsList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        super.onCreateOptionsMenu(menu)
+        menuInflater.inflate(R.menu.activity_missed_notifications_list_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.clearNotifications -> {
+                clearNotifications()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun clearNotifications() {
+        val diskManager = MissedNotificationsDiskManager(this)
+        diskManager.clearAllNotifications()
+        missedNotificationsList.adapter = MissedNotificationsAdapter(this)
+        finish()
     }
 }
 
