@@ -18,11 +18,20 @@
 
         <activity
                 android:name=".AddAppActivity"
-                android:exported="false"/>
+                android:exported="false">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="me.mcomella.notificationmanager.BlockedListActivity" />
+        </activity>
+
 
         <activity
                 android:name=".missednotify.MissedNotificationsListActivity"
-                android:exported="false"/>
+                android:exported="false">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="me.mcomella.notificationmanager.BlockedListActivity" />
+        </activity>
 
         <service android:name=".NotificationService"
                  android:label="NTFY"
