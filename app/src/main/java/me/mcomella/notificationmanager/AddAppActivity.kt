@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
+import android.content.pm.PackageManager
+import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -14,6 +16,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_add_app.*
+import me.mcomella.notificationmanager.ext.use
+import java.lang.ref.WeakReference
+import java.util.*
 
 class AddAppActivity : AppCompatActivity() {
     companion object {
@@ -28,31 +33,47 @@ class AddAppActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_app)
         supportActionBar!!.setTitle("Add application")
-    }
 
-    override fun onStart() {
-        super.onStart()
-        initAppList()
-    }
-
-    private fun initAppList() {
-        val installedApps = packageManager.getInstalledApplications(0).map { it.packageName }
-        val alreadyBlockedApps = intent.getStringArrayListExtra(KEY_BLOCKED_APPS).toSet()
-        val sortedAppsToShow = (installedApps - alreadyBlockedApps).toList().map {
-            packageManager.getApplicationInfo(it, 0)
-        }.sortedBy { it.loadLabel(packageManager).toString() }
-
-        appList.adapter = AddAppAdapter(this, sortedAppsToShow, { pkgName: String ->
-            val ret = Bundle()
-            ret.putString(KEY_ADDED_APP, pkgName)
-            val outerRet = Intent()
-            outerRet.putExtra(BlockedListActivity.KEY_BUNDLE, ret)
-            setResult(Activity.RESULT_OK, outerRet)
-
-            finish()
-        })
         appList.setHasFixedSize(true)
         appList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        LoadAppsAsyncTask(this, appList).execute(intent.getStringArrayListExtra(KEY_BLOCKED_APPS))
+    }
+}
+
+private class LoadAppsAsyncTask(activity: Activity, appList: RecyclerView) :
+        AsyncTask<List<String>, Void, List<ApplicationInfo>>() {
+
+    val activityWeakReference = WeakReference(activity)
+    val appListWeakReference = WeakReference(appList)
+
+    override fun doInBackground(vararg params: List<String>): List<ApplicationInfo> {
+        var installedSortedApps: List<ApplicationInfo> = listOf()
+        activityWeakReference.use { activity ->
+            val packageManager = activity.packageManager
+            val alreadyBlockedApps = params[0]
+            installedSortedApps = packageManager.getInstalledApplications(0).filter {
+                !alreadyBlockedApps.contains(it.packageName)
+            }.sortedBy { it.loadLabel(packageManager).toString() }
+        }
+        return installedSortedApps
+    }
+
+    override fun onPostExecute(result: List<ApplicationInfo>?) {
+        super.onPostExecute(result)
+
+        appListWeakReference.use { appList ->
+            activityWeakReference.use { activity ->
+                appList.adapter = AddAppAdapter(activity, result!!, { pkgName: String ->
+                    val ret = Bundle()
+                    ret.putString(AddAppActivity.KEY_ADDED_APP, pkgName)
+                    val outerRet = Intent()
+                    outerRet.putExtra(BlockedListActivity.KEY_BUNDLE, ret)
+                    activity.setResult(Activity.RESULT_OK, outerRet)
+
+                    activity.finish()
+                })
+            }
+        }
     }
 }
 
