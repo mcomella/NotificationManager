@@ -32,11 +32,10 @@
 
         <android.support.design.widget.FloatingActionButton
                 android:id="@+id/addAppButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right|bottom"
-                android:layout_marginRight="60dp"
-                android:layout_marginBottom="40dp"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_gravity="center_horizontal|bottom"
+                android:layout_marginBottom="16dp"
                 android:src="@drawable/add_black"
                 android:tint="@color/textColorPrimary"
                 />
