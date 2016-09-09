@@ -40,63 +40,67 @@
                 android:tint="@color/textColorPrimary"
                 />
 
-        <LinearLayout
-            android:id="@+id/emptyState"
-            android:layout_height="match_parent"
-            android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:gravity="center_horizontal"
-            android:visibility="gone"
-        >
+        <ScrollView
+                android:id="@+id/emptyState"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone">
+            <LinearLayout
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:gravity="center_horizontal"
+            >
 
-            <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/empty_state"
-                    android:scaleType="centerInside"
-                    android:paddingTop="40dp"
-                    android:paddingBottom="40dp"
-            />
+                <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/empty_state"
+                        android:scaleType="centerInside"
+                        android:paddingTop="40dp"
+                        android:paddingBottom="40dp"
+                />
 
-            <!-- Text set in code -->
-            <TextView
-                    android:textAppearance="@style/TitleText"
-                    android:id="@+id/emptyStateTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="20sp"
-            />
+                <!-- Text set in code -->
+                <TextView
+                        android:textAppearance="@style/TitleText"
+                        android:id="@+id/emptyStateTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                />
 
-            <TextView
-                    android:textAppearance="@style/TitleText"
-                    android:id="@+id/emptyStateSubtitleView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:padding="@dimen/activity_horizontal_margin"
-                    android:gravity="center"
-                    android:text="We would like to access your notifications to allow you to hide from them."
-                    android:lineSpacingMultiplier="1.3"
-            />
+                <TextView
+                        android:textAppearance="@style/TitleText"
+                        android:id="@+id/emptyStateSubtitleView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:padding="@dimen/activity_horizontal_margin"
+                        android:gravity="center"
+                        android:text="We would like to access your notifications to allow you to hide from them."
+                        android:lineSpacingMultiplier="1.3"
+                />
 
-            <Button
-                    android:id="@+id/permissionsSettingsButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@color/colorAccent"
-                    android:text="Allow Access"
-                    android:layout_marginTop="20dp"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
-                    android:textColor="@color/colorPrimary"
-                    android:minHeight="0dp"
-                    android:minWidth="0dp"/>
+                <Button
+                        android:id="@+id/permissionsSettingsButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/colorAccent"
+                        android:text="Allow Access"
+                        android:layout_marginTop="20dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        android:paddingLeft="20dp"
+                        android:paddingRight="20dp"
+                        android:textColor="@color/colorPrimary"
+                        android:minHeight="0dp"
+                        android:minWidth="0dp"/>
 
-        </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
 
     </FrameLayout>
 

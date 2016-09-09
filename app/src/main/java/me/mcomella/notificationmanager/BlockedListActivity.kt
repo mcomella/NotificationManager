@@ -19,7 +19,6 @@ import android.widget.Switch
 import android.widget.TextView
 
 import kotlinx.android.synthetic.main.activity_blocked_list.*
-import kotlinx.android.synthetic.main.blocked_list_item.*
 import me.mcomella.notificationmanager.ext.use
 import me.mcomella.notificationmanager.missednotify.MissedNotificationsDiskManager
 import me.mcomella.notificationmanager.missednotify.MissedNotificationsListActivity
