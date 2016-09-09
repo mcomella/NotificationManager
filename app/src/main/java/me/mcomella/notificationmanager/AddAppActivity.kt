@@ -1,9 +1,12 @@
 package me.mcomella.notificationmanager
 
 import android.app.Activity
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
+import android.content.pm.PackageManager
+import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -14,6 +17,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_add_app.*
+import me.mcomella.notificationmanager.ext.use
+import java.lang.ref.WeakReference
+import java.util.*
 
 class AddAppActivity : AppCompatActivity() {
     companion object {
@@ -24,35 +30,64 @@ class AddAppActivity : AppCompatActivity() {
         val KEY_ADDED_APP = "addedApp"
     }
 
+    var progressDialog: ProgressDialog? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_app)
         supportActionBar!!.setTitle("Add application")
+
+        appList.setHasFixedSize(true)
+        appList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
     }
 
     override fun onStart() {
         super.onStart()
-        initAppList()
+        LoadAppsAsyncTask(this, appList).execute(intent.getStringArrayListExtra(KEY_BLOCKED_APPS))
+
+        val progressDialog = ProgressDialog(this)
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER)
+        progressDialog.setMessage("Loading installed apps...")
+        progressDialog.show()
+        this.progressDialog = progressDialog
+    }
+}
+
+private class LoadAppsAsyncTask(activity: AddAppActivity, appList: RecyclerView) :
+        AsyncTask<List<String>, Void, List<ApplicationInfo>>() {
+
+    val activityWeakReference = WeakReference(activity)
+    val appListWeakReference = WeakReference(appList)
+
+    override fun doInBackground(vararg params: List<String>): List<ApplicationInfo> {
+        var installedSortedApps: List<ApplicationInfo> = listOf()
+        activityWeakReference.use { activity ->
+            val packageManager = activity.packageManager
+            val alreadyBlockedApps = params[0]
+            installedSortedApps = packageManager.getInstalledApplications(0).filter {
+                !alreadyBlockedApps.contains(it.packageName)
+            }.sortedBy { it.loadLabel(packageManager).toString() } // TODO: sorting is slow.
+        }
+        return installedSortedApps
     }
 
-    private fun initAppList() {
-        val installedApps = packageManager.getInstalledApplications(0).map { it.packageName }
-        val alreadyBlockedApps = intent.getStringArrayListExtra(KEY_BLOCKED_APPS).toSet()
-        val sortedAppsToShow = (installedApps - alreadyBlockedApps).toList().map {
-            packageManager.getApplicationInfo(it, 0)
-        }.sortedBy { it.loadLabel(packageManager).toString() }
+    override fun onPostExecute(result: List<ApplicationInfo>?) {
+        super.onPostExecute(result)
 
-        appList.adapter = AddAppAdapter(this, sortedAppsToShow, { pkgName: String ->
-            val ret = Bundle()
-            ret.putString(KEY_ADDED_APP, pkgName)
-            val outerRet = Intent()
-            outerRet.putExtra(BlockedListActivity.KEY_BUNDLE, ret)
-            setResult(Activity.RESULT_OK, outerRet)
+        appListWeakReference.use { appList ->
+            activityWeakReference.use { activity ->
+                activity.progressDialog?.cancel()
+                appList.adapter = AddAppAdapter(activity, result!!, { pkgName: String ->
+                    val ret = Bundle()
+                    ret.putString(AddAppActivity.KEY_ADDED_APP, pkgName)
+                    val outerRet = Intent()
+                    outerRet.putExtra(BlockedListActivity.KEY_BUNDLE, ret)
+                    activity.setResult(Activity.RESULT_OK, outerRet)
 
-            finish()
-        })
-        appList.setHasFixedSize(true)
-        appList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+                    activity.finish()
+                })
+            }
+        }
     }
 }
 
