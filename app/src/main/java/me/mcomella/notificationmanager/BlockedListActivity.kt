@@ -2,11 +2,13 @@ package me.mcomella.notificationmanager
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.Toolbar
 import android.view.*
 import android.widget.ImageView
 import android.widget.Switch
@@ -45,6 +47,7 @@ class BlockedListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_blocked_list)
         attachClickListeners()
+        initToolbar()
     }
 
     private fun attachClickListeners() {
@@ -58,6 +61,11 @@ class BlockedListActivity : AppCompatActivity() {
         permissionsSettingsButton.setOnClickListener {
             startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
         }
+    }
+
+    private fun initToolbar() {
+        setSupportActionBar(toolbar)
+        toolbar.title = "NTFY"
     }
 
     private fun isNotificationListenerPermissionGranted(): Boolean {

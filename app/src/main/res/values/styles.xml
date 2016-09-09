@@ -10,6 +10,16 @@
         <item name="android:windowBackground">@color/windowBackground</item>
     </style>
 
+    <!-- TODO: copy is bad. -->
+    <style name="AppThemeNoActionBar" parent="Theme.AppCompat.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@color/textColorPrimary</item>
+        <item name="android:windowBackground">@color/windowBackground</item>
+    </style>
+
     <style name="AppItemContainer">
         <item name="android:paddingTop">12dp</item>
         <item name="android:paddingBottom">12dp</item>
