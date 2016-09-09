@@ -56,15 +56,29 @@
                     android:layout_height="wrap_content"
                     android:src="@drawable/empty_state"
                     android:scaleType="centerInside"
-                    android:layout_marginBottom="-30dp"
+                    android:paddingTop="40dp"
+                    android:paddingBottom="40dp"
             />
 
             <!-- Text set in code -->
             <TextView
-                    style="@style/TitleText"
+                    android:textAppearance="@style/TitleText"
                     android:id="@+id/emptyStateTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textSize="20sp"
+            />
+
+            <TextView
+                    android:textAppearance="@style/TitleText"
+                    android:id="@+id/emptyStateSubtitleView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:padding="@dimen/activity_horizontal_margin"
+                    android:gravity="center"
+                    android:text="We would like to access your notifications to allow you to hide from them."
+                    android:lineSpacingMultiplier="1.3"
             />
 
             <Button
@@ -72,10 +86,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@color/colorAccent"
-                    android:text="Show settings"
-                    android:layout_marginTop="14dp"
-                    android:padding="10dp"
-            />
+                    android:text="Allow Access"
+                    android:layout_marginTop="20dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:textColor="@color/colorPrimary"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"/>
 
         </LinearLayout>
 
