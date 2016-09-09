@@ -74,21 +74,24 @@ class BlockedListActivity : AppCompatActivity() {
                 grantedPkgs.contains(packageName)
     }
 
-    private fun updatePermissionPrompt() {
+    private fun updatePermissionAndEmptyStatePrompt() {
         if (isNotificationListenerPermissionGranted()) {
             emptyStateTextView.text = "Add any apps you want to hide from!"
             permissionsSettingsButton.visibility = View.GONE
+            addAppButton.visibility = View.VISIBLE
+            isEmpty = DiskManager(this).readAppsFromDisk().isEmpty()
         } else {
             emptyStateTextView.text = "Give me permissions plz. :)"
             permissionsSettingsButton.visibility = View.VISIBLE
+            addAppButton.visibility = View.GONE
+            isEmpty = true // Not actually empty, but this hack works.
         }
     }
 
     override fun onStart() {
         super.onStart()
 
-        updatePermissionPrompt()
-        isEmpty = DiskManager(this).readAppsFromDisk().isEmpty()
+        updatePermissionAndEmptyStatePrompt()
 
         blockedList.adapter = BlockedListAdapter(this)
         blockedList.setHasFixedSize(true)
