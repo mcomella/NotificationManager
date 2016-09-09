@@ -53,7 +53,7 @@ private class LoadAppsAsyncTask(activity: Activity, appList: RecyclerView) :
             val alreadyBlockedApps = params[0]
             installedSortedApps = packageManager.getInstalledApplications(0).filter {
                 !alreadyBlockedApps.contains(it.packageName)
-            }.sortedBy { it.loadLabel(packageManager).toString() }
+            }.sortedBy { it.loadLabel(packageManager).toString() } // TODO: sorting is slow.
         }
         return installedSortedApps
     }
