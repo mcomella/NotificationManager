@@ -1,6 +1,7 @@
 package me.mcomella.notificationmanager
 
 import android.app.Activity
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
@@ -29,6 +30,8 @@ class AddAppActivity : AppCompatActivity() {
         val KEY_ADDED_APP = "addedApp"
     }
 
+    var progressDialog: ProgressDialog? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_app)
@@ -36,11 +39,21 @@ class AddAppActivity : AppCompatActivity() {
 
         appList.setHasFixedSize(true)
         appList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+    }
+
+    override fun onStart() {
+        super.onStart()
         LoadAppsAsyncTask(this, appList).execute(intent.getStringArrayListExtra(KEY_BLOCKED_APPS))
+
+        val progressDialog = ProgressDialog(this)
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER)
+        progressDialog.setMessage("Loading installed apps...")
+        progressDialog.show()
+        this.progressDialog = progressDialog
     }
 }
 
-private class LoadAppsAsyncTask(activity: Activity, appList: RecyclerView) :
+private class LoadAppsAsyncTask(activity: AddAppActivity, appList: RecyclerView) :
         AsyncTask<List<String>, Void, List<ApplicationInfo>>() {
 
     val activityWeakReference = WeakReference(activity)
@@ -63,6 +76,7 @@ private class LoadAppsAsyncTask(activity: Activity, appList: RecyclerView) :
 
         appListWeakReference.use { appList ->
             activityWeakReference.use { activity ->
+                activity.progressDialog?.cancel()
                 appList.adapter = AddAppAdapter(activity, result!!, { pkgName: String ->
                     val ret = Bundle()
                     ret.putString(AddAppActivity.KEY_ADDED_APP, pkgName)
