@@ -2,13 +2,17 @@ package me.mcomella.notificationmanager
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
+import android.graphics.*
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
+import android.support.v7.view.menu.MenuBuilder
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
+import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.Switch
@@ -16,6 +20,7 @@ import android.widget.TextView
 
 import kotlinx.android.synthetic.main.activity_blocked_list.*
 import me.mcomella.notificationmanager.ext.use
+import me.mcomella.notificationmanager.missednotify.MissedNotificationsDiskManager
 import me.mcomella.notificationmanager.missednotify.MissedNotificationsListActivity
 import java.lang.ref.WeakReference
 import java.util.*
@@ -88,10 +93,23 @@ class BlockedListActivity : AppCompatActivity() {
         }
     }
 
+    private fun updateToolbarMenu(menu: Menu?) {
+        if (menu == null) return
+
+        menu.clear()
+        val blockedNotificationCount = MissedNotificationsDiskManager(this).readNotificationsFromDisk().size
+        if (blockedNotificationCount > 0) {
+            val item = menu.add(0, R.id.showMissedNotifications, 0, "Show missed notifications")
+            item.icon = resources.getDrawable(R.drawable.circle_accent_color, null)
+            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+        }
+    }
+
     override fun onStart() {
         super.onStart()
 
         updatePermissionAndEmptyStatePrompt()
+        updateToolbarMenu(toolbar.menu)
 
         blockedList.adapter = BlockedListAdapter(this)
         blockedList.setHasFixedSize(true)
@@ -138,8 +156,13 @@ class BlockedListActivity : AppCompatActivity() {
         startService(intent) // TODO: start service on device startup too.
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.activity_blocked_list_menu, menu)
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // create content in onPrepare
+        return true
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        updateToolbarMenu(menu)
         return true
     }
 

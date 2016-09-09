@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <!-- Unused file but we borrow this id -->
     <item
             android:id="@+id/showMissedNotifications"
-            android:icon="@drawable/circle_accent_color"
             android:title="Show missed notifications"
             app:showAsAction="always"
     />
