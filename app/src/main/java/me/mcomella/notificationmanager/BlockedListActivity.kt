@@ -19,6 +19,7 @@ import android.widget.Switch
 import android.widget.TextView
 
 import kotlinx.android.synthetic.main.activity_blocked_list.*
+import kotlinx.android.synthetic.main.blocked_list_item.*
 import me.mcomella.notificationmanager.ext.use
 import me.mcomella.notificationmanager.missednotify.MissedNotificationsDiskManager
 import me.mcomella.notificationmanager.missednotify.MissedNotificationsListActivity
@@ -81,13 +82,15 @@ class BlockedListActivity : AppCompatActivity() {
 
     private fun updatePermissionAndEmptyStatePrompt() {
         if (isNotificationListenerPermissionGranted()) {
-            emptyStateTextView.text = "Add any apps you want to hide from!"
+            emptyStateTextView.text = "Add apps you want to hide from!"
             permissionsSettingsButton.visibility = View.GONE
+            emptyStateSubtitleView.visibility = View.GONE
             addAppButton.visibility = View.VISIBLE
             isEmpty = DiskManager(this).readAppsFromDisk().isEmpty()
         } else {
-            emptyStateTextView.text = "Give me permissions plz. :)"
+            emptyStateTextView.text = "Access Notifications"
             permissionsSettingsButton.visibility = View.VISIBLE
+            emptyStateSubtitleView.visibility = View.VISIBLE
             addAppButton.visibility = View.GONE
             isEmpty = true // Not actually empty, but this hack works.
         }
