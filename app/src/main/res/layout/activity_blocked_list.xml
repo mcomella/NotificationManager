@@ -43,11 +43,22 @@
                 android:layout_marginBottom="-30dp"
         />
 
+        <!-- Text set in code -->
         <TextView
                 style="@style/TitleText"
+                android:id="@+id/emptyStateTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Add any apps you want to hide from!"
+        />
+
+        <Button
+                android:id="@+id/permissionsSettingsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/colorAccent"
+                android:text="Show settings"
+                android:layout_marginTop="14dp"
+                android:padding="10dp"
         />
 
     </LinearLayout>

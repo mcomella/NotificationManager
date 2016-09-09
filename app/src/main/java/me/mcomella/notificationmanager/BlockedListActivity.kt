@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.*
@@ -53,11 +54,32 @@ class BlockedListActivity : AppCompatActivity() {
             intent.putExtra(AddAppActivity.KEY_BLOCKED_APPS, ArrayList(blockedApps))
             startActivityForResult(intent, REQ_CODE_ADD_APP)
         }
+
+        permissionsSettingsButton.setOnClickListener {
+            startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
+        }
+    }
+
+    private fun isNotificationListenerPermissionGranted(): Boolean {
+        val grantedPkgs = Settings.Secure.getString(contentResolver, "enabled_notification_listeners")
+        return grantedPkgs != null &&
+                grantedPkgs.contains(packageName)
+    }
+
+    private fun updatePermissionPrompt() {
+        if (isNotificationListenerPermissionGranted()) {
+            emptyStateTextView.text = "Add any apps you want to hide from!"
+            permissionsSettingsButton.visibility = View.GONE
+        } else {
+            emptyStateTextView.text = "Give me permissions plz. :)"
+            permissionsSettingsButton.visibility = View.VISIBLE
+        }
     }
 
     override fun onStart() {
         super.onStart()
 
+        updatePermissionPrompt()
         isEmpty = DiskManager(this).readAppsFromDisk().isEmpty()
 
         blockedList.adapter = BlockedListAdapter(this)
