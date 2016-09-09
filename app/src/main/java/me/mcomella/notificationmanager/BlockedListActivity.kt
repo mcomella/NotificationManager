@@ -100,8 +100,8 @@ class BlockedListActivity : AppCompatActivity() {
         val blockedNotificationCount = MissedNotificationsDiskManager(this).readNotificationsFromDisk().size
         if (blockedNotificationCount > 0) {
             val item = menu.add(0, R.id.showMissedNotifications, 0, "Show missed notifications")
-            item.icon = resources.getDrawable(R.drawable.circle_accent_color, null)
             item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+            item.icon = createMissedNotificationCounter(blockedNotificationCount)
         }
     }
 
@@ -164,6 +164,27 @@ class BlockedListActivity : AppCompatActivity() {
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         updateToolbarMenu(menu)
         return true
+    }
+
+    private fun createMissedNotificationCounter(notificationCount: Int): Drawable {
+        // http://stackoverflow.com/a/9033538
+        val dimen = resources.getDimensionPixelSize(R.dimen.toolbar_icon_size)
+        val bm = Bitmap.createBitmap(dimen, dimen, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bm)
+        val colorAccentPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+        colorAccentPaint.color = resources.getColor(R.color.colorAccent, null)
+
+        canvas.drawCircle(canvas.width / 2f, canvas.height / 2f, canvas.width / 2f, colorAccentPaint)
+
+        val textPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+        textPaint.color = resources.getColor(R.color.colorPrimary, null)
+        textPaint.textSize = resources.getDimensionPixelSize(R.dimen.toolbar_text_size).toFloat()
+        // positions: http://stackoverflow.com/a/11121873
+        val cntStr = notificationCount.toString()
+        val xPos = canvas.width / 2f - (if (cntStr.length > 1) 2.5f else 1f) * resources.getDimensionPixelSize(R.dimen.toolbar_text_offset)
+        val yPos = canvas.height / 2f - (textPaint.ascent() - textPaint.descent()) / 2f - resources.getDimensionPixelSize(R.dimen.toolbar_text_offset)
+        canvas.drawText(cntStr, xPos, yPos, textPaint)
+        return BitmapDrawable(resources, bm)
     }
 
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
