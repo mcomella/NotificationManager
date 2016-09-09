@@ -1,42 +1,24 @@
 package me.mcomella.notificationmanager
 
 import android.content.Context
-import org.json.JSONObject
+import com.fasterxml.jackson.module.kotlin.*
 import java.io.File
 
 class DiskManager(context: Context) {
-    val file = File(context.filesDir, "applicationMap.json")
+    private val SCHEMA = 1 // to iterate on format without causing crashes.
 
-    fun saveApplicationsToDisk(applicationMap: Map<String, Boolean>) {
-        val json = applicationMapToJSON(applicationMap)
-        file.writeText(json.toString())
+    val file = File(context.filesDir, "apps${SCHEMA}.json")
+
+    fun saveAppsToDisk(apps: List<BlockedAppInfo>) {
+        jacksonObjectMapper().writeValue(file, apps)
     }
 
-    private fun applicationMapToJSON(applicationList: Map<String, Boolean>): JSONObject {
-        val json = JSONObject()
-        for ((pkgName, isChecked) in applicationList) {
-            json.put(pkgName, isChecked)
-        }
-        return json
-    }
-
-    fun readApplicationsFromDisk(): MutableMap<String, Boolean> {
+    fun readAppsFromDisk(): List<BlockedAppInfo> {
         file.createNewFile()
-        val onDisk = file.readText()
-        return if (onDisk.isEmpty()) {
-            mutableMapOf()
+        return if (file.length() == 0L) {
+            listOf()
         } else {
-            val json = JSONObject(onDisk)
-            jsonToApplicationMap(json)
+            jacksonObjectMapper().readValue(file)
         }
-    }
-
-    private fun jsonToApplicationMap(json: JSONObject): MutableMap<String, Boolean> {
-        val applicationMap: MutableMap<String, Boolean> = mutableMapOf()
-        for (key in json.keys()) {
-            val isChecked = json.getBoolean(key)
-            applicationMap.put(key, isChecked)
-        }
-        return applicationMap
     }
 }

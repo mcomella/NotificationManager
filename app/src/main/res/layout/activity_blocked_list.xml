@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+        tools:context="me.mcomella.notificationmanager.BlockedListActivity"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat"/>
+
+    <FrameLayout android:layout_width="match_parent"
+                 android:layout_height="0dp"
+                 android:layout_weight="1"
+    >
+
+        <android.support.v7.widget.RecyclerView
+                android:id="@+id/blockedList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:background="@color/windowBackground"
+                />
+
+        <android.support.design.widget.FloatingActionButton
+                android:id="@+id/addAppButton"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_gravity="center_horizontal|bottom"
+                android:layout_marginBottom="16dp"
+                android:src="@drawable/add_black"
+                android:tint="@color/textColorPrimary"
+                />
+
+        <LinearLayout
+            android:id="@+id/emptyState"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:gravity="center_horizontal"
+            android:visibility="gone"
+        >
+
+            <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/empty_state"
+                    android:scaleType="centerInside"
+                    android:layout_marginBottom="-30dp"
+            />
+
+            <!-- Text set in code -->
+            <TextView
+                    style="@style/TitleText"
+                    android:id="@+id/emptyStateTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+            />
+
+            <Button
+                    android:id="@+id/permissionsSettingsButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorAccent"
+                    android:text="Show settings"
+                    android:layout_marginTop="14dp"
+                    android:padding="10dp"
+            />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</LinearLayout>
